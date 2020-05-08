@@ -1,0 +1,29 @@
+{
+    "periode": "Period : 3041 | 29-04-2020 (WED)",
+    "data": [
+        {
+            "type": "Special Prize",
+            "value": "24382959"
+        },
+        {
+            "type": "Grand Prize",
+            "value": "71145765"
+        },
+        {
+            "type": "Regular Prize",
+            "value": "77725022"
+        },
+        {
+            "type": "Second Prize",
+            "value": "02646087"
+        },
+        {
+            "type": "Third Prize",
+            "value": "35511355"
+        },
+        {
+            "type": "Fourth Prize",
+            "value": "48717677"
+        }
+    ]
+}

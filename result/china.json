@@ -1,0 +1,37 @@
+{
+    "periode": "Draw NO : 3039 | 29-04-2020 (WED)",
+    "data": [
+        {
+            "type": "1st prize",
+            "value": "372537"
+        },
+        {
+            "type": "2nd prize",
+            "value": "459003"
+        },
+        {
+            "type": "3rd prize",
+            "value": "297069"
+        },
+        {
+            "type": "Special Prize",
+            "data": [
+                "837793",
+                "890400",
+                "118108",
+                "466430",
+                "812069"
+            ]
+        },
+        {
+            "type": "Consolation Prize",
+            "data": [
+                "170908",
+                "580072",
+                "522446",
+                "565287",
+                "217125"
+            ]
+        }
+    ]
+}

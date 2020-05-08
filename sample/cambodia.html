@@ -1,0 +1,83 @@
+
+<body bgcolor="#FFFFFF"> <!-- #FEF9FD -->
+    <SCRIPT LANGUAGE="JavaScript">
+    <!--
+    //var fom =  document.form1;       /*nama form */
+    function validatediksi (fom) {
+        err = "";
+        if (!fom.fname.value.length>0) {
+            fom.fname.focus();
+            err = "Full name harus diisi.";
+        }else if (!fom.email.value.length>0) {
+            fom.email.focus();
+            err = "To harus diisi.";
+        }else if (!fom.message.value.length>0) {
+            fom.message.focus();
+            err = "Message harus diisi.";
+        }
+        if (err.length > 0) {
+            alert(err);
+            return false;
+        }
+    }
+    //-->
+    </SCRIPT>
+    <form method=get name=smon OnSubmit="return validatediksi(this);">
+
+        <table cellspacing=0 cellpadding=0 border=0 width='100%' style='font-family: Times New Roman Baltic;' style="font-weight: lighter;" align=center>
+        <tr><td></td><td align=right>Date : 02-May-2020</td></tr>
+        <tr><td colspan=2><br></td></tr>
+        <tr><td colspan=2 align=center>
+            <table cellspacing="0" cellpadding="0" border=0 bordercolor=#EFEFEF width='100%'>
+            <tr align=center height=25><td width="33%">
+                <table width="100%" cellpadding="0" cellspacing="0" align="center" height=100%>
+                <tr align="center"><td width="10"><img src="images/kiri.jpg" /></td><td background=images/mid.jpg><font color="white">1<sup>st</sup> PRIZE</font></td></tr>
+                </table></td>
+            <td scope="width:1px;" bgcolor="#FB7A02"></td><td width="1px" align="left" bgcolor="#EEEEEE"></td><td scope="width:1px;" bgcolor="#FB7A02"></td>
+            <td background=images/mid.jpg width="33%"><font color="white">2<sup>nd</sup> PRIZE</font></td>
+            <td width="1" bgcolor="#F6EFEA"></td><td width="width:1px;" bgcolor="#FB7A02"></td>
+            <td width="33%">
+                <table cellpadding="0" cellspacing="0" width="100%" height=100%>
+                <tr align="center"><td background=images/mid.jpg><font color="white">3<sup>rd</sup> PRIZE</font></td><td width="10"><img src="images/kanan.jpg" /></td></tr></table>
+            </td></tr>
+
+            <tr><td colspan="8">
+            <table cellpadding="0" cellspacing="0" width="100%" border="1" bordercolor=#EEEEEE style="border-collapse: collapse;">
+            <tr align=center height=25><td width='33%'>&nbsp;<img src=images/bola/kuning_0.jpg height=25>&nbsp;<img src=images/bola/kuning_8.jpg height=25>&nbsp;<img src=images/bola/kuning_6.jpg height=25>&nbsp;<img src=images/bola/kuning_3.jpg height=25>&nbsp;</td><td width='33%'>&nbsp;<img src=images/bola/kuning_7.jpg height=25>&nbsp;<img src=images/bola/kuning_5.jpg height=25>&nbsp;<img src=images/bola/kuning_1.jpg height=25>&nbsp;<img src=images/bola/kuning_2.jpg height=25>&nbsp;</td><td width='33%'>&nbsp;<img src=images/bola/kuning_1.jpg height=25>&nbsp;<img src=images/bola/kuning_7.jpg height=25>&nbsp;<img src=images/bola/kuning_4.jpg height=25>&nbsp;<img src=images/bola/kuning_7.jpg height=25>&nbsp;</td></tr></table></td></tr><tr><td><br></td></tr><tr><td colspan=2>    </table></td></tr>
+        <table cellpadding="0" cellspacing="0" width="100%" align="center" border="0" style='border-collapse:collapse;border-color: #F6EFEA;'>
+        <tr align="center"><td align=center width=100%>
+            <table cellspacing="0" cellpadding="0" border=0 bordercolor=#000000 width='100%'>
+            <tr align=center height=25><td width="350px">
+                <table width="100%" cellpadding="0" cellspacing="0" align="center" height=100% border=0>
+                <tr align="center"><td width="10px" align=left><img src="images/kiri.jpg" /></td><td background=images/mid.jpg width="325px"><font color="white">LUCKY PRIZES</font></td></tr>
+                </table></td>
+            <td width="1px" align="left" bgcolor="#EEEEEE"></td>
+            <td background=images/mid.jpg width="314px"><font color="white">CONSOLATION PRIZES</font></td>
+            <td width="10"><img src="images/kanan.jpg" /></td>
+            </tr>
+            <!--
+            <tr align="center"><td>1747</td><td>4895</td><td>2810</td><td>6547</td></tr>
+            <tr align="center"><td>7932</td><td>3264</td><td>4219</td><td>8434</td></tr>
+            <tr align="center"><td>2707</td><td>8161</td><td>2684</td><td></td></tr>
+            -->
+            <tr><td colspan="6">
+            <table cellpadding="0" cellspacing="0" border="1" bordercolor=#EFEFEF style="border-collapse: collapse;" align="center" width="100%" border="0">
+                <tr align="center"><td width="50%">&nbsp;<img src=images/bola/kuning_4.jpg height=25>&nbsp;<img src=images/bola/kuning_8.jpg height=25>&nbsp;<img src=images/bola/kuning_9.jpg height=25>&nbsp;<img src=images/bola/kuning_5.jpg height=25>&nbsp;</td><td width="50%">&nbsp;<img src=images/bola/kuning_2.jpg height=25>&nbsp;<img src=images/bola/kuning_8.jpg height=25>&nbsp;<img src=images/bola/kuning_1.jpg height=25>&nbsp;<img src=images/bola/kuning_0.jpg height=25>&nbsp;</td></tr>
+                <tr align="center"><td>&nbsp;<img src=images/bola/kuning_7.jpg height=25>&nbsp;<img src=images/bola/kuning_9.jpg height=25>&nbsp;<img src=images/bola/kuning_3.jpg height=25>&nbsp;<img src=images/bola/kuning_2.jpg height=25>&nbsp;</td><td>&nbsp;<img src=images/bola/kuning_6.jpg height=25>&nbsp;<img src=images/bola/kuning_5.jpg height=25>&nbsp;<img src=images/bola/kuning_4.jpg height=25>&nbsp;<img src=images/bola/kuning_7.jpg height=25>&nbsp;</td></tr>
+                <tr align="center"><td>&nbsp;<img src=images/bola/kuning_3.jpg height=25>&nbsp;<img src=images/bola/kuning_2.jpg height=25>&nbsp;<img src=images/bola/kuning_6.jpg height=25>&nbsp;<img src=images/bola/kuning_4.jpg height=25>&nbsp;</td><td>&nbsp;<img src=images/bola/kuning_4.jpg height=25>&nbsp;<img src=images/bola/kuning_2.jpg height=25>&nbsp;<img src=images/bola/kuning_1.jpg height=25>&nbsp;<img src=images/bola/kuning_9.jpg height=25>&nbsp;</td></tr>
+                <tr align="center"><td>&nbsp;<img src=images/bola/kuning_2.jpg height=25>&nbsp;<img src=images/bola/kuning_7.jpg height=25>&nbsp;<img src=images/bola/kuning_0.jpg height=25>&nbsp;<img src=images/bola/kuning_7.jpg height=25>&nbsp;</td><td>&nbsp;<img src=images/bola/kuning_8.jpg height=25>&nbsp;<img src=images/bola/kuning_4.jpg height=25>&nbsp;<img src=images/bola/kuning_3.jpg height=25>&nbsp;<img src=images/bola/kuning_4.jpg height=25>&nbsp;</td></tr>
+                <tr align="center"><td>&nbsp;<img src=images/bola/kuning_8.jpg height=25>&nbsp;<img src=images/bola/kuning_1.jpg height=25>&nbsp;<img src=images/bola/kuning_6.jpg height=25>&nbsp;<img src=images/bola/kuning_1.jpg height=25>&nbsp;</td><td>&nbsp;<img src=images/bola/kuning_2.jpg height=25>&nbsp;<img src=images/bola/kuning_6.jpg height=25>&nbsp;<img src=images/bola/kuning_8.jpg height=25>&nbsp;<img src=images/bola/kuning_4.jpg height=25>&nbsp;</td></tr>
+            </table></td></tr>
+            </table>
+        <input type=hidden value='home' name=sign>
+    </form>
+    <SCRIPT LANGUAGE="JavaScript">
+    <!--
+    function updateLink(a){
+        var fom =  document.smon;/*nama form */
+        var id = eval("fom.dd");
+        //alert(a+" >>> "+id.value);
+        window.open("index-menu.php?sign="+a+"&val="+ id.value, "frame")
+    }
+    //-->
+    </SCRIPT>
