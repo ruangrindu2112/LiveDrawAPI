@@ -12,6 +12,66 @@ class LiveDraw
     {
     }
 
+    public static function parsingSingapore()
+    {
+        $filename = 'singapore.html';
+
+        $htmlString =  self::getData($filename);
+        $doc = self::newDoc($htmlString);
+        $result = [];
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $table =  $doc->find('div.article-body')[0];
+        return $table->html();
+
+
+
+    }
+    public static function parsingSydney()
+    {
+        $filename = 'sydney.html';
+
+        $htmlString =  self::getData($filename);
+        $doc = self::newDoc($htmlString);
+        $result = [];
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $table =  $doc->find('table')[0];
+
+        foreach ($table->find('tr') as $key => $value) {
+            if ($key == 0) {
+                // return $value->html();
+            } else if ($key == 1) {
+                $result['periode'] = trim($value->text());
+            } else {
+                // return $value->html();
+                if ($value->has('table')) {
+
+                    foreach ($value->find('table')[0]->find('tr') as  $tr) {
+
+
+                        $angka = [];
+                        foreach ($tr->find('img') as $img) {
+                            array_push($angka, self::antara($img->src, '_', '.jpg'));
+                        }
+                        $angka = implode('', $angka);
+                        $arr = [
+                            'type' => trim($tr->find('td')[0]->text()),
+                            'value' => $angka
+                        ];
+                        if (trim($tr->find('td')[0]->text()) !== '') {
+
+                            array_push($result['data'], $arr);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
     public static function parsingSydney4d()
     {
         $filename = 'sydney4d.html';
@@ -19,9 +79,12 @@ class LiveDraw
         $htmlString =  self::getData($filename);
         $doc = self::newDoc($htmlString);
         $result = [];
+        $result['periode'] = [];
         $result['data'] = [];
         // $result['periode'] = trim($doc->find('td[align=right]')[0]->text());
 
+        $periode =  $doc->find('table')[4]->find('table')[1]->find('span')[1]->text();
+        $result['periode'] = $periode;
 
         $tb4 =  $doc->find('table')[5];
 
@@ -64,10 +127,11 @@ class LiveDraw
                 }
             }
         }
+
         $angkatengah =  array_chunk($angkatengah, 4);
         foreach ($angkatengah as $key => $value) {
 
-            $angkatengah[$key] = implode('',$value);
+            $angkatengah[$key] = implode('', $value);
             # code...
         }
         array_push($result['data'], [
@@ -75,7 +139,27 @@ class LiveDraw
             'value' => $angkatengah
         ]);
 
-        // return $angkatengah;
+        $angkaakhir  = [];
+        foreach ($akhir->find('tr')[0]->find('table') as $key => $tbatas) {
+            if ($key >= 1) {
+
+                foreach ($tbatas->find('td') as $td) {
+                    $angkaakhir[] .= $td->text();
+                }
+            }
+        }
+        $angkaakhir =  array_chunk($angkaakhir, 4);
+        foreach ($angkaakhir as $key => $value) {
+
+            $angkaakhir[$key] = implode('', $value);
+            # code...
+        }
+        array_push($result['data'], [
+            'type' => 'Consolation Prize',
+            'value' => $angkaakhir
+        ]);
+
+        // return $angkaakhir;
         return $result;
     }
 
