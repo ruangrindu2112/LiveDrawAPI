@@ -6,10 +6,89 @@ use DiDom\Document;
 use Didom\Query;
 use DiDom\StyleAttribute;
 
+use Jenssegers\Blade\Blade;
+
+
 class LiveDraw
 {
     public function __construct()
     {
+    }
+
+
+    public static function render($template, $data = [])
+    {
+    }
+
+    public static function parsingMagnum4d()
+    {
+
+        $tanggal = date('d-m-Y', strtotime("tomorrow"));
+        $url = 'https://webservices.magnum4d.my/results/past/latest-before/' . $tanggal . '/1';
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $data = json_decode(@file_get_contents($url), false);
+        $part = $data->PastResultsRange->PastResults;
+
+        $result['periode'] = $part->DrawDate;
+        array_push($result['data'], [
+            'type' => '1st Prize',
+            'data' => $part->FirstPrize
+        ]);
+        array_push($result['data'], [
+            'type' => '2nd Prize',
+            'data' => $part->SecondPrize
+        ]);
+        array_push($result['data'], [
+            'type' => '3rd Prize',
+            'data' => $part->ThirdPrize
+        ]);
+
+
+        $special = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $rx = 'Special' . $i;
+            array_push($special, $part->$rx);
+        }
+        array_push(
+            $result['data'],
+            [
+                'type' => 'Special Prize',
+                'data' => $special
+            ]
+
+        );
+        $console = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $rx = 'Console' . $i;
+            array_push($console, $part->$rx);
+        }
+
+        array_push(
+            $result['data'],
+            [
+                'type' => 'Consolation Prize',
+                'data' => $console
+            ]
+
+        );
+
+        // print_r($result);
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('mgn', ['result' => (object) $result])->render();
+
+
+
+
+
+
+
+
+
+
+        //    https://webservices.magnum4d.my/results/past/latest-before/12-05-2020/1
+
     }
 
     public static function parsingHongkong()
@@ -105,9 +184,11 @@ class LiveDraw
         //     // array_push($result['data'], $arr);
         // }
 
+        // print_r($result);
 
 
-        return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('hk', ['result' => (object) $result])->render();
     }
     public static function parsingSingapore45()
     {
@@ -120,7 +201,31 @@ class LiveDraw
         $result['periode'] = null;
         $result['data'] = null;
 
-        if ($doc->has('div#fourd')) {
+        if ($doc->has('div#winner')) {
+
+            $winner = $doc->find('div#winner')[0];
+            $table = $winner->find('table')[0];
+            $imgs = '';
+
+            foreach ($table->find('tr') as $key => $value) {
+
+                if ($key == 0) {
+                    $result['periode'] =  trim($value->text());
+                } elseif ($key == 2) {
+
+                    // return $value->html();
+                    foreach ($value->find('img') as $img) {
+                        $imgs .= self::antara($img->src, 'image/', '.');
+                    }
+                } elseif ($key == 3) {
+
+                    foreach ($value->find('img') as $img) {
+                        $imgs .= self::antara($img->src, 'image/', '.');
+                    }
+                }
+            }
+            $result['data'] = str_split($imgs, 2);
+        } else if ($doc->has('div#fourd')) {
             $fourd =  $doc->find('div#fourd')[0];
 
             $table = $fourd->find('table');
@@ -166,7 +271,9 @@ class LiveDraw
         }
 
 
-        return $result;
+
+        $blade = new Blade('views', 'cache');
+        echo  $blade->make('sgp45', ['result' => (object) $result])->render();
     }
     public static function parsingSingapore()
     {
@@ -189,7 +296,7 @@ class LiveDraw
         foreach ($table1->find('tbody')[0]->find('tr') as $tr) {
             $arr = [
                 'type' => trim($tr->find('th')[0]->text()),
-                'value' => trim($tr->find('td')[0]->text())
+                'data' => trim($tr->find('td')[0]->text())
             ];
 
             array_push($result['data'], $arr);
@@ -202,7 +309,7 @@ class LiveDraw
         }
         $arr = [
             'type' => $type,
-            'value' => $prizes
+            'data' => $prizes
         ];
         array_push($result['data'], $arr);
         $type = trim($table3->find('th')[0]->text());
@@ -212,14 +319,16 @@ class LiveDraw
         }
         $arr = [
             'type' => $type,
-            'value' => $prizes
+            'data' => $prizes
         ];
         array_push($result['data'], $arr);
 
 
 
 
-        return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('sgp', ['result' => (object) $result])->render();
+        // return $result;
         // return $table->html();
     }
     public static function parsingSydney()
@@ -250,7 +359,7 @@ class LiveDraw
                 $angka = implode('', $angka);
                 $arr = [
                     'type' => trim($tr->find('td')[0]->text()),
-                    'value' => $angka
+                    'data' => $angka
                 ];
                 if (trim($tr->find('td')[0]->text()) !== '') {
 
@@ -287,7 +396,9 @@ class LiveDraw
             // }
         }
 
-        return $result;
+        // return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('sd', ['result' => (object) $result])->render();
     }
     public static function parsingSydney4d()
     {
@@ -331,7 +442,7 @@ class LiveDraw
 
             array_push($result['data'], [
                 'type' => $type,
-                'value' => implode('', $value)
+                'data' => implode('', $value)
             ]);
         }
 
@@ -354,7 +465,7 @@ class LiveDraw
         }
         array_push($result['data'], [
             'type' => 'Starter Prize',
-            'value' => $angkatengah
+            'data' => $angkatengah
         ]);
 
         $angkaakhir  = [];
@@ -374,11 +485,13 @@ class LiveDraw
         }
         array_push($result['data'], [
             'type' => 'Consolation Prize',
-            'value' => $angkaakhir
+            'data' => $angkaakhir
         ]);
 
         // return $angkaakhir;
-        return $result;
+        // return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('syd', ['result' => (object) $result])->render();
     }
 
     //  cambodia
@@ -455,7 +568,11 @@ class LiveDraw
             'type' => 'Consolation Prizes',
             'value' => $kanan
         ]);
-        return $result;
+        // return $result;
+
+
+        $blade = new Blade('views', 'cache');
+        echo  $blade->make('cambodia', ['result' => (object) $result])->render();
     }
 
 
@@ -521,7 +638,9 @@ class LiveDraw
 
 
 
-        return $result;
+        // return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('chn', ['result' => (object) $result])->render();
     }
 
     // taiwan OK
@@ -561,12 +680,16 @@ class LiveDraw
 
             array_push($result['data'], [
                 'type' => $td[1]->text(),
-                'value' => implode('', $em)
+                'data' => implode('', $em)
             ]);
         }
-        // var_dump($result);
+        // print_r((object)$result);
+        // die;
 
-        return $result;
+
+
+        $blade = new Blade('views', 'cache');
+        echo  $blade->make('tw', ['result' => (object) $result])->render();
     }
 
     public static function parsingTest($kode)
@@ -574,6 +697,7 @@ class LiveDraw
         $kode = strtolower($kode);
         $url = self::kocokSource($kode);
         $htmlString = file_get_contents($url);
+        // print_r($htmlString);
 
 
         $doc = self::newDoc($htmlString);
@@ -583,7 +707,7 @@ class LiveDraw
         $doc->first('img')->remove();
         $doc->first('a')->replace($domElement);
 
-        return  $doc->find('table')[0]->html();
+        echo  $doc->find('table')[0]->html();
     }
 
     public static function kocokSource($name)
