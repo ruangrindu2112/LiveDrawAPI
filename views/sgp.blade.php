@@ -4,12 +4,12 @@
       <td colspan="5" class="img-livedraw"></td>
     </tr>
     <tr>
-      <td class="box-color sgp" colspan="5">{{ $result->periode }}</td>
+      <td class="box-color sgp draw-periode" colspan="5">{{ $result->periode }}</td>
     </tr>
 
     @foreach ($result->data as $key => $value )
     @if ($key<=2) <td class="box-color sgp" colspan="2">{{ $value['type'] }}</td>
-      <td class="box-value twnumber" colspan="3"><a>{{ $value['data'] }}</a></td>
+      <td class="box-value sgp-number prize{{ $key+1 }}" colspan="3">{{ $value['data'] }}</td>
       </tr>
 
       @endif
@@ -25,7 +25,7 @@
       @foreach (array_chunk($result->data[3]['data'],5) as $chunk)
       <tr>
         @foreach ($chunk as $item)
-        <td class="box-value sgp-number">{{ $item }}</td>
+        <td class="box-value starter-number">{{ $item }}</td>
         @endforeach
 
 
@@ -40,13 +40,13 @@
       </tr>
 
       <tr>
-        <td class="box-color sgp consol-sgp" colspan="5">Consolation Prize</td>
+        <td class="box-color sgp" colspan="5">Consolation Prize</td>
       </tr>
 
       @foreach (array_chunk($result->data[4]['data'],5) as $chunk)
       <tr>
         @foreach ($chunk as $item)
-        <td class="box-value sgp-number">{{ $item }}</td>
+        <td class="box-value consol-number">{{ $item }}</td>
         @endforeach
 
 

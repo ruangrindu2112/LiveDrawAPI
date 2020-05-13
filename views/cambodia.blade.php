@@ -4,7 +4,7 @@
       <td colspan="5" class="img-livedraw"></td>
     </tr>
     <tr>
-      <td class="box-color cam" colspan="5">{{ $result->periode }}</td>
+      <td class="box-color cam draw-periode" colspan="5">{{ $result->periode }}</td>
     </tr>
 
 
@@ -15,19 +15,19 @@
 
     @if ($key<=2 && $value!==null) <tr>
       <td class="box-color cam" colspan="2">{{ $value['type'] }}</td>
-      <td class="box-value cam-number" colspan="3"><a>{{ $value['value'] }}</a></td>
+      <td class="box-value cam-number prize{{ $key+1 }}" colspan="3">{{ $value['value'] }}</td>
       </tr>
 
       @else
       <tr>
-        <td class="box-color cam-number" colspan="5">{{ $value['type'] }}</td>
+        <td class="box-color cam cam-number" colspan="5">{{ $value['type'] }}</td>
 
 
       </tr>
       <tr>
         @foreach ($value['value'] as $item)
 
-        <td colspan="1" class="box-value camnumber">{{ $item }}</td>
+        <td colspan="1" class="box-value {{ ($key === "3" ? 'starter-number': 'consol-number') }}">{{ $item }}</td>
 
         @endforeach
       </tr>

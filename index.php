@@ -40,9 +40,9 @@ switch (strtoupper($file)) {
     case 'SGP45':
         $data = LiveDraw::parsingSingapore45();
         break;
-    case 'HK':
-        $data = LiveDraw::parsingHongkong();
-        break;
+    // case 'HK':
+    //     $data = LiveDraw::parsingHongkong();
+    //     break;
     case 'MGN':
         $data = LiveDraw::parsingMagnum4d();
         break;

@@ -12,7 +12,7 @@
 
     <tr>
       <td class="box-color tw" colspan="2">{{ $value['type'] }}</td>
-      <td class="box-value twnumber" colspan="2"><a>{{ $value['value'] }}</a></td>
+      <td class="box-value twnumber prize{{ $key+1 }}" colspan="2">{{ $value['value'] }}</td>
     </tr>
 
     @endforeach

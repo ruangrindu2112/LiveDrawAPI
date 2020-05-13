@@ -4,12 +4,12 @@
       <td colspan="5" class="img-livedraw"></td>
     </tr>
     <tr>
-      <td class="box-color mgn" colspan="5">{{ $result->periode }}</td>
+      <td class="box-color mgn draw-periode" colspan="5">{{ $result->periode }}</td>
     </tr>
 
     @foreach ($result->data as $key => $value )
     @if ($key<=2) <td class="box-color mgn" colspan="2">{{ $value['type'] }}</td>
-      <td class="box-value twnumber" colspan="3"><a>{{ $value['data'] }}</a></td>
+      <td class="box-value twnumber prize{{ $key+1 }}" colspan="3">{{ $value['data'] }}</td>
       </tr>
 
       @endif
@@ -26,7 +26,7 @@
       <tr>
         @foreach ($item as $value)
 
-        <td class="box-value mgn-number">{{ $value }}</td>
+        <td class="box-value starter-number">{{ $value }}</td>
         @endforeach
 
       </tr>
@@ -48,7 +48,7 @@
       <tr>
         @foreach ($item as $value)
 
-        <td class="box-value mgn-number">{{ $value }}</td>
+        <td class="box-value consol-number">{{ $value }}</td>
         @endforeach
 
       </tr>

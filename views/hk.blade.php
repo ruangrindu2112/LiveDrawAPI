@@ -4,12 +4,12 @@
       <td colspan="4" class="img-livedraw"></td>
     </tr>
     <tr>
-      <td class="box-color hk" colspan="4">{{ $result->periode }}</td>
+      <td class="box-color hk draw-periode" colspan="4">{{ $result->periode }}</td>
     </tr>
 
     @foreach ($result->data as $key => $value )
-    @if ($key<=2) <td class="box-color tw" colspan="2">{{ $value['type'] }}</td>
-      <td class="box-value twnumber" colspan="3"><a>{{ $value['value'] }}</a></td>
+    @if ($key<=2) <td class="box-color hk" colspan="2">{{ $value['type'] }}</td>
+      <td class="box-value  prize{{ $key+1 }}" colspan="3">{{ $value['value'] }}</td>
       </tr>
 
       @endif
@@ -24,7 +24,7 @@
 
       <tr>
         @foreach ($result->data[3]['value'] as $key => $value)
-        <td class="box-value">{{ $value }}</td>
+        <td class="box-value starter-number" colspan="1">{{ $value }}</td>
         @endforeach
       </tr>
 
@@ -42,11 +42,8 @@
       @foreach (array_chunk($result->data[4]['value'],4) as $chunk)
       <tr>
 
-
-
-
         @foreach ($chunk as $item)
-        <td class="box-value">{{ $item }}</td>
+        <td class="box-value consol-number" colspan="1">{{ $item }}</td>
 
         @endforeach
       </tr>

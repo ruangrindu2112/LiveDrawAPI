@@ -7,7 +7,7 @@
       <td colspan="4" class="img-livedraw"></td>
     </tr>
     <tr>
-      <td class="box-color sgp45number" colspan="4">{{ $result->periode }}</td>
+      <td class="box-color sgp45 draw-periode" colspan="4">{{ $result->periode }}</td>
     </tr>
 
 
