@@ -1,14 +1,7 @@
 <?php
 
-use Jenssegers\Blade\Blade;
-require 'LiveDraw.class.php';
 error_reporting(1);
-
-
-
-
-
-
+require 'LiveDraw.class.php';
 
 
 // method panggil :  php index.php 'nama_file'
@@ -25,90 +18,56 @@ if (isset($argv)) {
 
 switch (strtoupper($file)) {
     case 'TW':
-
-        $data = LiveDraw::parsingTaiwan($file);
-
-        // print_r($data);
-        $blade = new Blade('views', 'cache');
-        // echo $blade->render('taiwan', ['data' => $data]);
-
-        // echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        die;
+        LiveDraw::parsingTaiwan($file);
+        break;
+    case 'MY':
+        LiveDraw::parsingMalaysia();
+        break;
+    case 'MYD':
+        LiveDraw::parsingMalaysiaDay();
+        break;
+    case 'CHN':
+        $data = LiveDraw::parsingChina();
+        break;
+    case 'CAM':
+        $data = LiveDraw::parsingCambodia();
         break;
 
-        // case 'CHN':
+    case 'SYD':
+        $data = LiveDraw::parsingSydney4d();
+        break;
+    case 'SD':
+        $data = LiveDraw::parsingSydneyx();
+        break;
+    case 'SGP':
+        $data = LiveDraw::parsingSingapore();
+        break;
+    case 'SGM':
+        $data = LiveDraw::parsingSingaporeMetro();
+        break;
+    case 'QTR':
+        $data = LiveDraw::parsingQatar();
+        break;
 
-        //     $data = LiveDraw::parsingChina();
-        //     // print_r($data);
-        //     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    case 'SGP45':
+        $data = LiveDraw::parsingSingapore45();
+        break;
+    case 'HK':
+        $data = LiveDraw::parsingHongkongx();
+        break;
+    case 'HKX':
+        $data = LiveDraw::parsingHongkong();
+        break;
+    case 'MGN':
+        $data = LiveDraw::parsingMagnum4d();
+        break;
+    case 'HKD':
+        $data = LiveDraw::parsingHongkongSiang();
+        break;
 
-        //     break;
-        // case 'CAM':
-
-        //     $data = LiveDraw::parsingCambodia();
-        //     // print_r($data);
-        //     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        //     break;
-        // case 'SYD':
-
-        //     $data = LiveDraw::parsingSydney4d();
-        //     // print_r($data);
-        //     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        //     break;
-        // case 'SD':
-
-        //     $data = LiveDraw::parsingSydney();
-        //     // print_r($data);
-        //     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        //     break;
-        // case 'SGP':
-
-        //     $data = LiveDraw::parsingSingapore();
-        //     // print_r($data);
-        //     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        //     break;
-
-
-        // case 'SGP45':
-
-        //     $data = LiveDraw::parsingSingapore45();
-        //     // print_r($data);
-        //     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        //     break;
-        // case 'HK':
-
-        //     $data = LiveDraw::parsingHongkong();
-        //     // print_r($data);
-        //     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        //     break;
 
 
     default:
         $data = LiveDraw::parsingTest($file);
-        //  print_r($data);
-        //  die;
-
         break;
 }
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-    <?php
-    echo $data;
-
-    ?>
-
-</body>
-
-</html>

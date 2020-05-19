@@ -6,18 +6,284 @@ use DiDom\Document;
 use Didom\Query;
 use DiDom\StyleAttribute;
 
+use Jenssegers\Blade\Blade;
+
+
 class LiveDraw
 {
     public function __construct()
     {
     }
 
+
+    public static function render($template, $data = [])
+    {
+    }
+
+    public static function parsingMagnum4d()
+    {
+
+        $tanggal = date('d-m-Y', strtotime("tomorrow"));
+        $url = 'https://webservices.magnum4d.my/results/past/latest-before/' . $tanggal . '/1';
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $data = json_decode(@file_get_contents($url), false);
+        $part = $data->PastResultsRange->PastResults;
+
+        $result['periode'] = $part->DrawDate;
+        array_push($result['data'], [
+            'type' => '1st Prize',
+            'data' => $part->FirstPrize
+        ]);
+        array_push($result['data'], [
+            'type' => '2nd Prize',
+            'data' => $part->SecondPrize
+        ]);
+        array_push($result['data'], [
+            'type' => '3rd Prize',
+            'data' => $part->ThirdPrize
+        ]);
+
+
+        $special = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $rx = 'Special' . $i;
+            array_push($special, $part->$rx);
+        }
+        array_push(
+            $result['data'],
+            [
+                'type' => 'Special Prize',
+                'data' => $special
+            ]
+
+        );
+        $console = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $rx = 'Console' . $i;
+            array_push($console, $part->$rx);
+        }
+
+        array_push(
+            $result['data'],
+            [
+                'type' => 'Consolation Prize',
+                'data' => $console
+            ]
+
+        );
+
+        // print_r($result);
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('mgn', ['result' => (object) $result])->render();
+
+
+
+        //    https://webservices.magnum4d.my/results/past/latest-before/12-05-2020/1
+
+    }
+
+    public static function parsingHongkongSiang()
+    {
+        // $filename = 'singapore.html';
+        $filename = 'HKS';
+
+        $htmlString =  self::getData($filename);
+        $doc = self::newDoc($htmlString);
+        $result = [];
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $table = $doc->find('table')[4];
+        $tr = $table->find('tr');
+
+
+        // first prize $tr[1]
+        // second $tr[3]
+        // third $tr[5]
+        // starter $tr[5]
+        // consol $tr[13]
+
+        $periode = $doc->find('table')[3]->find('span')[0]->text();
+        $result['periode'] = str_replace('LIVE DRAW at ', '', $periode);
+
+        $baskom  = '';
+        foreach ($tr[1]->find('td') as $td) {
+            $baskom .= $td->text();
+        }
+        $arr = [
+            'type' => '1st Prize',
+            'value' => $baskom
+        ];
+        // 2nd
+        array_push($result['data'], $arr);
+        $baskom  = '';
+        foreach ($tr[3]->find('td') as $td) {
+            $baskom .= $td->text();
+        }
+        $arr = [
+            'type' => '2nd Prize',
+            'value' => $baskom
+        ];
+        array_push($result['data'], $arr);
+        // 3rd
+        $baskom  = '';
+        foreach ($tr[5]->find('td') as $td) {
+            $baskom .= $td->text();
+        }
+        $arr = [
+            'type' => '3rd Prize',
+            'value' => $baskom
+        ];
+        array_push($result['data'], $arr);
+
+        $baskomx = [];
+        foreach ($tr[6]->find('table') as $key => $tablex) {
+            if ($key != 0) {
+                $baskomy = '';
+                foreach ($tablex->find('td') as $td) {
+
+                    $baskomy .= $td->text();
+                }
+                array_push($baskomx, $baskomy);
+            }
+        }
+        $arr = [
+            'type' => 'Starter Prize',
+            'value' => $baskomx
+        ];
+        array_push($result['data'], $arr);
+
+        // print_r($baskomx);
+
+        $baskomx = [];
+        foreach ($tr[13]->find('table') as $key => $tablex) {
+            if ($key != 0) {
+                $baskomy = '';
+                foreach ($tablex->find('td') as $td) {
+
+                    $baskomy .= $td->text();
+                }
+                array_push($baskomx, $baskomy);
+            }
+        }
+        $arr = [
+            'type' => 'Consolation Prize',
+            'value' => $baskomx
+        ];
+        array_push($result['data'], $arr);
+
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('hkd', ['result' => (object) $result])->render();
+        // print_r($result);
+    }
+    public static function parsingHongkongx()
+    {
+        // $filename = 'singapore.html';
+        $filename = 'HKX';
+
+        $htmlString =  self::getData($filename);
+
+
+        $doc = self::newDoc($htmlString);
+        $result = [];
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $table = $doc->find('table')[0];
+        $trx = $table->find('tr');
+        // foreach ($table->find('tr') as $key => $tr) {
+        //     print_r($key . "\n" . $tr->html() . "\n================\n");
+        // }
+
+
+
+
+        // 1st prize
+        $tdFirstPrize = $trx[2]->find('td');
+        $arr = [
+            'type' => $tdFirstPrize[0]->text(),
+            'value' => $tdFirstPrize[1]->text()
+        ];
+        array_push($result['data'], $arr);
+        // 2nd
+        $tdFirstPrize = $trx[3]->find('td');
+        $arr = [
+            'type' => $tdFirstPrize[0]->text(),
+            'value' => $tdFirstPrize[1]->text()
+        ];
+        array_push($result['data'], $arr);
+
+        $result['periode'] = trim($trx[1]->text());
+        // 3rd
+        $tdFirstPrize = $trx[4]->find('td');
+        $arr = [
+            'type' => $tdFirstPrize[0]->text(),
+            'value' => $tdFirstPrize[1]->text()
+        ];
+        array_push($result['data'], $arr);
+
+        // starter
+
+        $starter = [];
+        foreach ($trx[6]->find('td') as $td) {
+
+            array_push($starter, trim($td->text()));
+        }
+
+        $arr = [
+            'type' => 'Starter Prize',
+            'value' => $starter
+        ];
+        array_push($result['data'], $arr);
+
+        $consol = [];
+        for ($i = 9; $i < 11; $i++) {
+
+            foreach ($trx[$i]->find('td') as $td) {
+
+                array_push($consol, trim($td->text()));
+            }
+        }
+
+        $arr = [
+            'type' => 'Consolation Prize',
+            'value' => $consol
+        ];
+        array_push($result['data'], $arr);
+
+
+
+
+
+
+        $result['periode'] = trim($trx[1]->text());
+
+
+        // print_r($result);
+
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('hk', ['result' => (object) $result])->render();
+
+        // print_r($tr[0]->html());
+
+
+
+
+
+        // print_r($tr[0]->html());
+
+
+    }
     public static function parsingHongkong()
     {
         // $filename = 'singapore.html';
-        $filename = 'Hongkong';
+        $filename = 'HKX';
 
         $htmlString =  self::getData($filename);
+        echo $htmlString;
+        die;
         $doc = self::newDoc($htmlString);
         $result = [];
         $result['periode'] = [];
@@ -105,9 +371,11 @@ class LiveDraw
         //     // array_push($result['data'], $arr);
         // }
 
+        // print_r($result);
 
 
-        return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('hk', ['result' => (object) $result])->render();
     }
     public static function parsingSingapore45()
     {
@@ -120,7 +388,31 @@ class LiveDraw
         $result['periode'] = null;
         $result['data'] = null;
 
-        if ($doc->has('div#fourd')) {
+        if ($doc->has('div#winner')) {
+
+            $winner = $doc->find('div#winner')[0];
+            $table = $winner->find('table')[0];
+            $imgs = '';
+
+            foreach ($table->find('tr') as $key => $value) {
+
+                if ($key == 0) {
+                    $result['periode'] =  trim($value->text());
+                } elseif ($key == 2) {
+
+                    // return $value->html();
+                    foreach ($value->find('img') as $img) {
+                        $imgs .= self::antara($img->src, 'image/', '.');
+                    }
+                } elseif ($key == 3) {
+
+                    foreach ($value->find('img') as $img) {
+                        $imgs .= self::antara($img->src, 'image/', '.');
+                    }
+                }
+            }
+            $result['data'] = str_split($imgs, 2);
+        } else if ($doc->has('div#fourd')) {
             $fourd =  $doc->find('div#fourd')[0];
 
             $table = $fourd->find('table');
@@ -166,7 +458,110 @@ class LiveDraw
         }
 
 
-        return $result;
+
+        $blade = new Blade('views', 'cache');
+        echo  $blade->make('sgp45', ['result' => (object) $result])->render();
+    }
+    public static function parsingQatar()
+    {
+
+        $filename = 'QTR';
+        $htmlString =  self::getData($filename);
+        $doc = self::newDoc($htmlString);
+        $result = [];
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        // $table = $doc->find('tbody');
+        // $trx = $table->find('tr');
+        // foreach ($doc->find('tbody') as $key => $tr) {
+        //     print_r($key . "\n" . $tr->html() . "\n================\n");
+        // }
+
+        // print_r($table->html());
+        $tbody =  $doc->find('tbody');
+        foreach ($tbody[0]->find('tr') as $tr) {
+            $td = $tr->find('td');
+            $arr = [
+                'type' => $td[0]->text(),
+                'data' => $td[1]->find('span')[0]->text()
+            ];
+            array_push($result['data'], $arr);
+        }
+        $starter = [];
+        foreach ($tbody[1]->find('td') as $key => $td) {
+            array_push($starter, $td->find('span')[0]->text());
+        }
+
+        $arr = [
+            'type' => 'Starter Prize',
+            'data' => $starter
+        ];
+        array_push($result['data'], $arr);
+
+        $result['periode'] = $doc->find('thead.thead-dark')[0]->find('th')[0]->text();
+
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('qtr', ['result' => (object) $result])->render();
+    }
+    public static function parsingSingaporeMetro()
+    {
+        // $filename = 'singapore.html';
+        $filename = 'SGM';
+
+        $htmlString =  self::getData($filename);
+        $doc = self::newDoc($htmlString);
+        $result = [];
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $table =  $doc->find('table')[6];
+
+
+
+        $tableUtama = $table->find('table')[2];
+
+        $result['periode'] = $table->find('span.span1')[1]->text();
+
+
+        foreach ($tableUtama->find('td') as $td) {
+            $arr = [
+                'type' => $td->find('span')[0]->text(),
+                'data' => $td->find('span')[1]->text()
+            ];
+            array_push($result['data'], $arr);
+        }
+
+
+
+
+        $tableSecond = $table->find('table')[4];
+
+
+        $starter = [];
+        $consol = [];
+        foreach ($tableSecond->find('tr') as $tr) {
+            $td =  $tr->find('td');
+
+            array_push($starter, $td[0]->text());
+            array_push($starter, $td[1]->text());
+            array_push($consol, $td[2]->text());
+            array_push($consol,  $td[3]->text());
+        }
+        $arr = [
+            'type' => 'Starter Prizes',
+            'data' => $starter
+        ];
+        array_push($result['data'], $arr);
+        $arr = [
+            'type' => 'Consolation Prizes',
+            'data' => $consol
+        ];
+        array_push($result['data'], $arr);
+
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('sgm', ['result' => (object) $result])->render();
+        // print_r($result);
     }
     public static function parsingSingapore()
     {
@@ -189,7 +584,7 @@ class LiveDraw
         foreach ($table1->find('tbody')[0]->find('tr') as $tr) {
             $arr = [
                 'type' => trim($tr->find('th')[0]->text()),
-                'value' => trim($tr->find('td')[0]->text())
+                'data' => trim($tr->find('td')[0]->text())
             ];
 
             array_push($result['data'], $arr);
@@ -202,7 +597,7 @@ class LiveDraw
         }
         $arr = [
             'type' => $type,
-            'value' => $prizes
+            'data' => $prizes
         ];
         array_push($result['data'], $arr);
         $type = trim($table3->find('th')[0]->text());
@@ -212,15 +607,237 @@ class LiveDraw
         }
         $arr = [
             'type' => $type,
-            'value' => $prizes
+            'data' => $prizes
         ];
         array_push($result['data'], $arr);
 
 
 
 
-        return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('sgp', ['result' => (object) $result])->render();
+        // return $result;
         // return $table->html();
+    }
+    public static function parsingMalaysia()
+    {
+        // $filename = 'sydney.html';
+        $filename = 'MY';
+
+        $htmlString =  self::getData($filename);
+        $doc = self::newDoc($htmlString);
+        $result = [];
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $table = $doc->find('table');
+        // $trx = $table->find('tr');
+        // foreach ($doc->find('table') as $key => $tr) {
+        //     print_r($key . "\n" . $tr->html() . "\n================\n");
+        // }
+
+
+
+        $siang = $table[5];
+        $starter = [];
+        $consol = [];
+        foreach ($siang->find('tr') as $key => $tr) {
+            if ($key == 0) {
+            } elseif ($key == 1) {
+                $td = $tr->find('td');
+                $arr = [
+                    'type' => '1st Prize',
+                    'data' => $td[1]->find('span')[0]->text()
+                ];
+                array_push($result['data'], $arr);
+                $arr = [
+                    'type' => '2nd Prize',
+                    'data' => $td[2]->find('span')[0]->text()
+                ];
+                array_push($result['data'], $arr);
+                $arr = [
+                    'type' => '3rd Prize',
+                    'data' => $td[3]->find('span')[0]->text()
+                ];
+                array_push($result['data'], $arr);
+            } elseif ($key == 2 || $key == 3) {
+                foreach ($tr->find('span') as $span) {
+                    // echo $span->text();
+                    array_push($starter, trim($span->text()));
+                }
+            } else {
+                foreach ($tr->find('span') as $span) {
+                    // echo $span->text();
+                    array_push($consol, trim($span->text()));
+                }
+            }
+        }
+
+        $arr = [
+            'type' => '4th Prize',
+            'data' => $starter
+        ];
+        array_push($result['data'], $arr);
+
+        $arr = [
+            'type' => '5h Prize',
+            'data' => $consol
+        ];
+        array_push($result['data'], $arr);
+
+        $result['periode'] = $doc->find('span.title1')[0]->text();
+
+        // foreach ($doc->find('span.span1') as $key => $value) {
+        //     echo $value . "\n";
+        // }
+
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('my', ['result' => (object) $result])->render();
+    }
+
+    public static function removeSpace($string)
+    {
+        $string = preg_replace('/\s+/', '', $string);
+
+        return $string;
+    }
+
+    public static function parsingMalaysiaDay()
+    {
+        // $filename = 'sydney.html';
+        $filename = 'MY';
+
+        $htmlString =  self::getData($filename);
+        $doc = self::newDoc($htmlString);
+        $result = [];
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $table = $doc->find('table');
+        // $trx = $table->find('tr');
+        // foreach ($doc->find('table') as $key => $tr) {
+        //     print_r($key . "\n" . $tr->html() . "\n================\n");
+        // }
+
+
+
+        $siang = $table[4];
+        $starter = [];
+        $consol = [];
+        foreach ($siang->find('tr') as $key => $tr) {
+            if ($key == 0) {
+            } elseif ($key == 1) {
+                $td = $tr->find('td');
+                $arr = [
+                    'type' => '1st Prize',
+                    'data' => $td[1]->find('span')[0]->text()
+                ];
+                array_push($result['data'], $arr);
+                $arr = [
+                    'type' => '2nd Prize',
+                    'data' => $td[2]->find('span')[0]->text()
+                ];
+                array_push($result['data'], $arr);
+                $arr = [
+                    'type' => '3rd Prize',
+                    'data' => $td[3]->find('span')[0]->text()
+                ];
+                array_push($result['data'], $arr);
+            } elseif ($key == 2 || $key == 3) {
+                foreach ($tr->find('span') as $span) {
+                    // echo $span->text();
+                    array_push($starter, trim($span->text()));
+                }
+            } else {
+                foreach ($tr->find('span') as $span) {
+                    // echo $span->text();
+                    array_push($consol, trim($span->text()));
+                }
+            }
+        }
+
+        $arr = [
+            'type' => '4th Prize',
+            'data' => $starter
+        ];
+        array_push($result['data'], $arr);
+
+        $arr = [
+            'type' => '5th Prize',
+            'data' => $consol
+        ];
+        array_push($result['data'], $arr);
+
+        $result['periode'] = $doc->find('span.title1')[0]->text();
+
+        // foreach ($doc->find('span.span1') as $key => $value) {
+        //     echo $value . "\n";
+        // }
+
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('my', ['result' => (object) $result])->render();
+    }
+    public static function parsingSydneyx()
+    {
+        // $filename = 'sydney.html';
+        $filename = 'SDX';
+
+        $htmlString =  self::getData($filename);
+        $doc = self::newDoc($htmlString);
+        $result = [];
+        $result['periode'] = [];
+        $result['data'] = [];
+
+        $table = $doc->find('table')[0];
+        $trx = $table->find('tr');
+        // foreach ($table->find('tr') as $key => $tr) {
+        //     print_r($key . "\n" . $tr->html() . "\n================\n");
+        // }
+
+
+        // 1st prize
+        $tdFirstPrize = $trx[3]->find('td');
+        $arr = [
+            'type' => $tdFirstPrize[0]->text(),
+            'data' => $tdFirstPrize[1]->text()
+        ];
+        array_push($result['data'], $arr);
+        // 2nd
+        $tdFirstPrize = $trx[4]->find('td');
+        $arr = [
+            'type' => $tdFirstPrize[0]->text(),
+            'data' => $tdFirstPrize[1]->text()
+        ];
+        array_push($result['data'], $arr);
+
+        $result['periode'] = trim($trx[1]->text());
+        // 3rd
+        $tdFirstPrize = $trx[5]->find('td');
+        $arr = [
+            'type' => $tdFirstPrize[0]->text(),
+            'data' => $tdFirstPrize[1]->text()
+        ];
+        array_push($result['data'], $arr);
+        // starter
+        $tdFirstPrize = $trx[7]->find('td');
+
+        $arr = [
+            'type' => 'Starter Prize',
+            'data' => $tdFirstPrize[0]->text()
+        ];
+        array_push($result['data'], $arr);
+        // consol
+        $tdFirstPrize = $trx[9]->find('td');
+        $arr = [
+            'type' => 'Consolation Prize',
+            'data' => $tdFirstPrize[0]->text()
+        ];
+        array_push($result['data'], $arr);
+
+
+
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('sd', ['result' => (object) $result])->render();
     }
     public static function parsingSydney()
     {
@@ -250,7 +867,7 @@ class LiveDraw
                 $angka = implode('', $angka);
                 $arr = [
                     'type' => trim($tr->find('td')[0]->text()),
-                    'value' => $angka
+                    'data' => $angka
                 ];
                 if (trim($tr->find('td')[0]->text()) !== '') {
 
@@ -287,7 +904,9 @@ class LiveDraw
             // }
         }
 
-        return $result;
+        // return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('sd', ['result' => (object) $result])->render();
     }
     public static function parsingSydney4d()
     {
@@ -331,7 +950,7 @@ class LiveDraw
 
             array_push($result['data'], [
                 'type' => $type,
-                'value' => implode('', $value)
+                'data' => implode('', $value)
             ]);
         }
 
@@ -354,7 +973,7 @@ class LiveDraw
         }
         array_push($result['data'], [
             'type' => 'Starter Prize',
-            'value' => $angkatengah
+            'data' => $angkatengah
         ]);
 
         $angkaakhir  = [];
@@ -374,11 +993,13 @@ class LiveDraw
         }
         array_push($result['data'], [
             'type' => 'Consolation Prize',
-            'value' => $angkaakhir
+            'data' => $angkaakhir
         ]);
 
         // return $angkaakhir;
-        return $result;
+        // return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('syd', ['result' => (object) $result])->render();
     }
 
     //  cambodia
@@ -455,7 +1076,11 @@ class LiveDraw
             'type' => 'Consolation Prizes',
             'value' => $kanan
         ]);
-        return $result;
+        // return $result;
+
+
+        $blade = new Blade('views', 'cache');
+        echo  $blade->make('cambodia', ['result' => (object) $result])->render();
     }
 
 
@@ -521,7 +1146,9 @@ class LiveDraw
 
 
 
-        return $result;
+        // return $result;
+        $blade = new Blade('views', 'cache');
+        echo $blade->make('chn', ['result' => (object) $result])->render();
     }
 
     // taiwan OK
@@ -561,12 +1188,16 @@ class LiveDraw
 
             array_push($result['data'], [
                 'type' => $td[1]->text(),
-                'value' => implode('', $em)
+                'data' => implode('', $em)
             ]);
         }
-        // var_dump($result);
+        // print_r((object)$result);
+        // die;
 
-        return $result;
+
+
+        $blade = new Blade('views', 'cache');
+        echo  $blade->make('tw', ['result' => (object) $result])->render();
     }
 
     public static function parsingTest($kode)
@@ -574,6 +1205,7 @@ class LiveDraw
         $kode = strtolower($kode);
         $url = self::kocokSource($kode);
         $htmlString = file_get_contents($url);
+        // print_r($htmlString);
 
 
         $doc = self::newDoc($htmlString);
@@ -583,7 +1215,7 @@ class LiveDraw
         $doc->first('img')->remove();
         $doc->first('a')->replace($domElement);
 
-        return  $doc->find('table')[0]->html();
+        echo  $doc->find('table')[0]->html();
     }
 
     public static function kocokSource($name)
@@ -599,6 +1231,7 @@ class LiveDraw
             'washington' => 'http://104.248.155.224/live-draw-washington/res-washington.php',
             'seoul' => 'http://104.248.155.224/live-draw-seoul/res-seoul.php',
             'sydney' => 'http://104.248.155.224/live-draw-sydney/res-syd.php',
+            'sd' =>   'http://104.248.155.224/live-draw-sydney/res-syd.php',
             'manchester' => 'http://104.248.155.224/live-draw-manchester/res-manchester.php',
             'shanghai' => 'http://104.248.155.224/live-draw-shanghai/res-shanghai.php',
             'hochiminh' => 'http://104.248.155.224/live-draw-hochiminh/res-hochiminh.php',
@@ -641,7 +1274,15 @@ class LiveDraw
             "Cambodia" => "http://www.magnumcambodia.com/index-menu.php", //ok
             "China" => "http://www.chinapools.asia/home.php", // ok
             "Taiwan" => "http://www.taiwanlottery.net/livedraw.php", //ok
+            // tambahan
 
+            "SDX" => "http://104.248.155.224/live-draw-sydney/res-syd.php",
+            "HKX" => "http://104.248.155.224/live-draw-hk/res-hk.php",
+            "HKS" => "http://www.hkpools1.com/live",
+            // "SGM" => "http://www.sgmetro.com/resultsg.php",
+            "SGM" => "http://www.sgmetro.com/livesg.php",
+            "QTR" => "http://94.237.84.99/livedraw/qatar",
+            'MY' => "http://www.malaysialottery.net/"
         ];
 
         return $array[$provider];
