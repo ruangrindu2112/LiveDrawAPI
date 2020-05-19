@@ -1194,8 +1194,13 @@ class LiveDraw
         // print_r((object)$result);
         // die;
 
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> b83a6edb691ad12a4456bd55b6e0297376bbac6e
         $blade = new Blade('views', 'cache');
         echo  $blade->make('tw', ['result' => (object) $result])->render();
     }

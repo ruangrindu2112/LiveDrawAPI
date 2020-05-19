@@ -20,12 +20,15 @@ switch (strtoupper($file)) {
     case 'TW':
         LiveDraw::parsingTaiwan($file);
         break;
+<<<<<<< HEAD
     case 'MY':
         LiveDraw::parsingMalaysia();
         break;
     case 'MYD':
         LiveDraw::parsingMalaysiaDay();
         break;
+=======
+>>>>>>> b83a6edb691ad12a4456bd55b6e0297376bbac6e
     case 'CHN':
         $data = LiveDraw::parsingChina();
         break;
@@ -67,6 +70,15 @@ switch (strtoupper($file)) {
 
 
 
+    case 'SGP45':
+        $data = LiveDraw::parsingSingapore45();
+        break;
+    // case 'HK':
+    //     $data = LiveDraw::parsingHongkong();
+    //     break;
+    case 'MGN':
+        $data = LiveDraw::parsingMagnum4d();
+        break;
     default:
         $data = LiveDraw::parsingTest($file);
         break;
